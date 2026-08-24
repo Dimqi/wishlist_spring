@@ -2,8 +2,9 @@ package com.example.demo_pet_spring.RESTApi;
 
 
 import com.example.demo_pet_spring.config.SecurityConfig;
+import com.example.demo_pet_spring.dataTransferObjects.ApiResponseDto;
 import com.example.demo_pet_spring.dataTransferObjects.AuthRequestDTO;
-import com.example.demo_pet_spring.dataTransferObjects.AuthResponseDTO;
+import com.example.demo_pet_spring.dataTransferObjects.UserDto;
 import com.example.demo_pet_spring.service.AuthService;
 import com.example.demo_pet_spring.service.JWTService;
 import jakarta.validation.Valid;
@@ -28,11 +29,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody AuthRequestDTO reqDto){
-        AuthResponseDTO response = authService.login(reqDto);
+    public ResponseEntity<ApiResponseDto<UserDto>> login(@Valid @RequestBody AuthRequestDTO reqDto){
+        ApiResponseDto<UserDto> response = authService.login(reqDto);
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + response.getToken()).
+        return ResponseEntity.status(HttpStatus.valueOf(response.getCode()))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + response.getData().getToken()).
                 body(response);
 
 
@@ -40,13 +41,12 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponseDTO> register(@Valid @RequestBody AuthRequestDTO reqDto){
-        AuthResponseDTO response = authService.register(reqDto);
+    public ResponseEntity<ApiResponseDto<UserDto>> register(@Valid @RequestBody AuthRequestDTO reqDto){
+        ApiResponseDto<UserDto> response = authService.register(reqDto);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + response.getToken()).
+        return ResponseEntity.status(HttpStatus.valueOf(response.getCode()))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + response.getData().getToken()).
                 body(response);
-
 
     }
 

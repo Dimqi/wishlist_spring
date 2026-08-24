@@ -1,5 +1,8 @@
 package com.example.demo_pet_spring.RESTApi;
 
+import com.example.demo_pet_spring.dataTransferObjects.ApiResponseDto;
+import com.example.demo_pet_spring.dataTransferObjects.WishDto;
+import com.example.demo_pet_spring.dataTransferObjects.WishRequestDTO;
 import com.example.demo_pet_spring.entities.UserEntity;
 import com.example.demo_pet_spring.entities.WishEntity;
 import org.springframework.http.HttpStatusCode;
@@ -22,36 +25,41 @@ public class WishListController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WishEntity> getWishById(@PathVariable Long id){
-        Optional<WishEntity> wishOpt = wishListService.getById(id);
+    public ResponseEntity<ApiResponseDto<WishDto>>  getWishById(@PathVariable Long id){
+        ApiResponseDto<WishDto> response = wishListService.getById(id);
 
-        if (wishOpt.isPresent()) {
-            return ResponseEntity.ok().body(wishOpt.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.status(HttpStatusCode.valueOf(response.getCode()))
+                .body(response);
     }
+
     @GetMapping("/all")
-    public ResponseEntity<List<WishEntity>> getAllWishes(){
-        return ResponseEntity.ok().body(wishListService.getAllWishes());
+    public ResponseEntity<ApiResponseDto<WishDto>>  getAllWishes(){
+        ApiResponseDto<WishDto> response = wishListService.getAllWishes();
+
+        return ResponseEntity.status(HttpStatusCode.valueOf(response.getCode()))
+                .body(response);
     }
 
 
     @PostMapping
-    public ResponseEntity<WishEntity> createWish(@RequestBody WishEntity wish,
-    @AuthenticationPrincipal UserEntity currentUser){
+    public ResponseEntity<ApiResponseDto<WishDto>> createWish(@RequestBody WishRequestDTO wishDto,
+                                                              @AuthenticationPrincipal UserEntity currentUser){
 
-        wish.setCreatedBy(currentUser);
-        wishListService.addWish(wish);
+        ApiResponseDto<WishDto> response = wishListService.addWish(wishDto, currentUser);
 
-        return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(wish);
+        return ResponseEntity.status(HttpStatusCode.valueOf(response.getCode()))
+                .body(response);
+
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteWish(@PathVariable Long id){
-        wishListService.deleteWish(id);
 
-        return ResponseEntity.noContent().build();
+    //пофиксить, чтобы желания брались у текущего пользователя
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponseDto<WishDto>>  deleteWish(@PathVariable Long id){
+        ApiResponseDto<WishDto> response = wishListService.deleteWish(id);
+
+        return ResponseEntity.status(HttpStatusCode.valueOf(response.getCode()))
+                .body(response);
     }
 
 }

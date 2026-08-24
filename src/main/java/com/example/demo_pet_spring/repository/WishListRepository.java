@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface WishListRepository extends JpaRepository<WishEntity, Long> {
 
-
+//пофиксить, чтобы желания брались у текущего пользователя
+    
 
 }

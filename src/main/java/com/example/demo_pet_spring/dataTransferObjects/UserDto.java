@@ -1,7 +1,6 @@
 package com.example.demo_pet_spring.dataTransferObjects;
 
-public class AuthResponseDTO {
-
+public class UserDto {
     private String username;
 
     private Long id;
