@@ -41,9 +41,10 @@ public class WishListService {
 
     }
 
-    public ApiResponseDto<WishDto> getById(Long id){
+    public ApiResponseDto<WishDto> getById(Long id, UserEntity currentUser){
+        Long userId = currentUser.getId();
 
-        Optional<WishEntity> wishOpt = wishListRepository.findById(id);
+        Optional<WishEntity> wishOpt = wishListRepository.findById(id, userId);
 
         if (wishOpt.isPresent()) {
             return createResponse(true, 200, "wish successfully found!", new WishDto(wishOpt.get()), null);
@@ -52,15 +53,17 @@ public class WishListService {
         }
     }
 
-    public ApiResponseDto<WishDto> deleteWish(Long id){
+    public ApiResponseDto<WishDto> deleteWish(Long id, UserEntity currentUser){
+        Long userId = currentUser.getId();
 
-        wishListRepository.deleteById(id);
+        wishListRepository.deleteById(id, userId);
         return createResponse(true, 204, "wish successfully deleted!", null, null);
 
     }
 
-    public ApiResponseDto<WishDto>  getAllWishes(){
-        List<WishEntity> wishes = wishListRepository.findAll();
+    public ApiResponseDto<WishDto>  getAllWishes(UserEntity currentUser){
+        Long userId = currentUser.getId();
+        List<WishEntity> wishes = wishListRepository.findAll(userId);
 
         // Преобразуем каждый элемент
         List<WishDto> wishDtoList = wishes.stream()
