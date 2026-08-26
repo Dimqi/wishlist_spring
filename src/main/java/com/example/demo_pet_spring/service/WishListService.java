@@ -65,7 +65,6 @@ public class WishListService {
         Long userId = currentUser.getId();
         List<WishEntity> wishes = wishListRepository.findAll(userId);
 
-        // Преобразуем каждый элемент
         List<WishDto> wishDtoList = wishes.stream()
                 .map(WishDto::new)
                 .toList();

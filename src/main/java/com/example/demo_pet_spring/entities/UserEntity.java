@@ -31,6 +31,9 @@ public class UserEntity implements UserDetails {
     @Column(nullable = false, name = "password")
     private String password;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "share_token_id")
+    private ShareToken shareToken;
 
     public String getPassword() {
         return password;
@@ -74,6 +77,11 @@ public class UserEntity implements UserDetails {
     }
 
 
+    public ShareToken getShareToken() {
+        return shareToken;
+    }
 
-
+    public void setShareToken(ShareToken shareToken) {
+        this.shareToken = shareToken;
+    }
 }

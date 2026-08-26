@@ -14,4 +14,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     @Query("SELECT u FROM UserEntity u WHERE u.username = :username")
     Optional<UserEntity> findByUsername(@Param("username") String username);
+
+    @Query("SELECT u FROM UserEntity u JOIN u.shareToken st WHERE st.token = :token")
+    Optional<UserEntity> findByToken(@Param("token") String token);
+
 }
