@@ -46,7 +46,6 @@ public class WishListController {
     @PostMapping
     public ResponseEntity<ApiResponseDto<WishDto>> createWish(@Valid @RequestBody WishRequestDTO wishDto,
                                                               @AuthenticationPrincipal UserEntity currentUser){
-
         ApiResponseDto<WishDto> response = wishListService.addWish(wishDto, currentUser);
 
         return ResponseEntity.status(HttpStatusCode.valueOf(response.getCode()))
@@ -63,4 +62,21 @@ public class WishListController {
                 .body(response);
     }
 
+    @GetMapping("/allByTag")
+    public ResponseEntity<ApiResponseDto<WishDto>> getAllByTag(@RequestParam(name = "name") String tagName, @AuthenticationPrincipal UserEntity currentUser){
+        ApiResponseDto<WishDto> response = wishListService.getAllWishesByTag(currentUser, tagName);
+
+        return ResponseEntity.status(HttpStatusCode.valueOf(response.getCode()))
+                .body(response);
+
+    }
+
+    @PatchMapping("/addTagToWish")
+    public ResponseEntity<ApiResponseDto<WishDto>> addTagToWish(@RequestParam String name, @RequestParam(name = "wish_id") Long wishId, @AuthenticationPrincipal UserEntity currentUser){
+        ApiResponseDto<WishDto> response = wishListService.updateTagOnWish(wishId, currentUser, name);
+
+        return ResponseEntity.status(HttpStatusCode.valueOf(response.getCode()))
+                .body(response);
+
+    }
 }

@@ -14,6 +14,7 @@ public class WishRequestDTO {
 
     private WishPriority wishPriority;
 
+    private String tagName;
 
     public String getName() {
         return name;
@@ -38,5 +39,13 @@ public class WishRequestDTO {
 
     public void setWishPriority(WishPriority wishPriority) {
         this.wishPriority = wishPriority;
+    }
+
+    public String getTagName() {
+        return tagName;
+    }
+
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
     }
 }

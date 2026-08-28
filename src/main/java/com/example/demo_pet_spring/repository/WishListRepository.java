@@ -4,6 +4,7 @@ package com.example.demo_pet_spring.repository;
 import com.example.demo_pet_spring.entities.UserEntity;
 import com.example.demo_pet_spring.entities.WishEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -22,4 +23,14 @@ public interface WishListRepository extends JpaRepository<WishEntity, Long> {
 
     @Query("SELECT w FROM WishEntity w WHERE w.createdBy.id = :userId")
     List<WishEntity> findAll(@Param("userId") Long userId);
+
+    @Query("SELECT w FROM WishEntity w WHERE w.tag.id = :tagId AND w.createdBy.id = :userId")
+    List<WishEntity> findAllByTag(@Param("userId") Long userId, @Param("tagId") Long tagId);
+
+    @Modifying
+    @Query("UPDATE WishEntity w SET w.tag.id = :tagId WHERE w.id = :wishId AND w.createdBy.id = :userId")
+    int updateTagOnWish(@Param("wishId") Long wishId,
+                  @Param("tagId") Long tagId,
+                  @Param("userId") Long userId);
+
 }

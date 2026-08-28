@@ -12,11 +12,17 @@ public class WishDto {
 
     private WishPriority wishPriority;
 
+    private String tagName;
+
     public WishDto(WishEntity wishEntity){
         setId(wishEntity.getId());
         setName(wishEntity.getName());
         setLink(wishEntity.getLink());
         setWishPriority(wishEntity.getWishPriority());
+
+        if(wishEntity.getTag() != null){
+            setTagName(wishEntity.getTag().getName());
+        }
     }
 
 
@@ -50,5 +56,13 @@ public class WishDto {
 
     public void setWishPriority(WishPriority wishPriority) {
         this.wishPriority = wishPriority;
+    }
+
+    public String getTagName() {
+        return tagName;
+    }
+
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
     }
 }

@@ -25,6 +25,10 @@ public class WishEntity {
     @JoinColumn(nullable = false, name = "user_id")
     private UserEntity createdBy;
 
+    @ManyToOne
+    @JoinColumn(name = "tag_id", nullable = true)
+    private TagEntity tag;
+
     public String getLink() {
         return link;
     }
@@ -63,5 +67,13 @@ public class WishEntity {
 
     public void setCreatedBy(UserEntity createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public TagEntity getTag() {
+        return tag;
+    }
+
+    public void setTag(TagEntity tag) {
+        this.tag = tag;
     }
 }
