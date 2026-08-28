@@ -14,5 +14,5 @@ public interface TagRepository extends JpaRepository<TagEntity, Long> {
     Optional<TagEntity> findTagEntitiesByName(String name, Long id);
 
     @Query("SELECT t FROM TagEntity t WHERE t.user.id = :userId")
-    List<TagEntity> findAll(Long id);
+    List<TagEntity> findAll(Long userId);
 }

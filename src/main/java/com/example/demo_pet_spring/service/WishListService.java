@@ -123,7 +123,7 @@ public class WishListService {
         ApiResponseDto<WishDto> responseDTO = new ApiResponseDto<>();
         responseDTO.setSuccess(success);
         responseDTO.setCode(code);
-        responseDTO.setMessage("message");
+        responseDTO.setMessage(message);
         responseDTO.setData(data);
         responseDTO.setListData(listData);
         return responseDTO;

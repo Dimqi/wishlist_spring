@@ -19,6 +19,7 @@ public class TagEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
+
     @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WishEntity> wish;
 

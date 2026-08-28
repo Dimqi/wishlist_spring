@@ -1,6 +1,7 @@
 package com.example.demo_pet_spring.service;
 
 import com.example.demo_pet_spring.dataTransferObjects.ApiResponseDto;
+import com.example.demo_pet_spring.dataTransferObjects.TagDto;
 import com.example.demo_pet_spring.dataTransferObjects.WishDto;
 import com.example.demo_pet_spring.entities.TagEntity;
 import com.example.demo_pet_spring.entities.UserEntity;
@@ -19,6 +20,7 @@ public class TagService {
         this.tagRepository = tagRepository;
     }
     //пофиксить lazy загрузку
+
     public TagEntity addNewTag(String name, UserEntity user){
         TagEntity tag = new TagEntity();
         tag.setName(name);
@@ -29,14 +31,15 @@ public class TagService {
     }
 
     @Transactional
-    public ApiResponseDto<TagEntity> createNewTag(String name, UserEntity user){
+    public ApiResponseDto<TagDto> createNewTag(String name, UserEntity user){
         if(tagRepository.findTagEntitiesByName(name, user.getId()).isPresent()){
             return  createResponse(false, 400, "Tag with this name already exists", null, null);
         }
 
         TagEntity tag = addNewTag(name, user);
+        TagDto tagDto = new TagDto(tag);
 
-        return createResponse(true, 201, "tag successfully added!", tag, null);
+        return createResponse(true, 201, "tag successfully added!", tagDto, null);
 
 
     }
@@ -46,18 +49,23 @@ public class TagService {
         return tagRepository.findTagEntitiesByName(name, user.getId());
     }
 
-    public ApiResponseDto<TagEntity> getAll(UserEntity user){
+    public ApiResponseDto<TagDto> getAll(UserEntity user){
         List<TagEntity> tags = tagRepository.findAll(user.getId());
 
-        return createResponse(true, 200, "tags successfully found!", null, tags);
+        List<TagDto> tagsDto = tags.stream()
+                .map(TagDto::new)
+                .toList();
+
+        return createResponse(true, 200, "tags successfully found!", null, tagsDto);
 
 
     }
 
 
 
-    public ApiResponseDto<TagEntity> createResponse(boolean success, int code, String message, TagEntity data, List<TagEntity> listData ){
-        ApiResponseDto<TagEntity> responseDTO = new ApiResponseDto<>();
+    public ApiResponseDto<TagDto> createResponse(boolean success, int code, String message, TagDto data, List<TagDto> listData ){
+
+        ApiResponseDto<TagDto> responseDTO = new ApiResponseDto<>();
         responseDTO.setSuccess(success);
         responseDTO.setCode(code);
         responseDTO.setMessage(message);

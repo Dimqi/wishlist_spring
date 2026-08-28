@@ -1,6 +1,7 @@
 package com.example.demo_pet_spring.RESTApi;
 
 import com.example.demo_pet_spring.dataTransferObjects.ApiResponseDto;
+import com.example.demo_pet_spring.dataTransferObjects.TagDto;
 import com.example.demo_pet_spring.entities.TagEntity;
 import com.example.demo_pet_spring.entities.UserEntity;
 import com.example.demo_pet_spring.service.TagService;
@@ -20,8 +21,8 @@ public class TagController {
     }
 
     @PostMapping("/addTag")
-    public ResponseEntity<ApiResponseDto<TagEntity>> createTag(@RequestParam String name, @AuthenticationPrincipal UserEntity currentUser ){
-        ApiResponseDto<TagEntity> response =  tagService.createNewTag(name, currentUser);
+    public ResponseEntity<ApiResponseDto<TagDto>> createTag(@RequestParam String name, @AuthenticationPrincipal UserEntity currentUser ){
+        ApiResponseDto<TagDto> response =  tagService.createNewTag(name, currentUser);
 
         return ResponseEntity.status(HttpStatusCode.valueOf(response.getCode()))
                 .body(response);
@@ -29,8 +30,8 @@ public class TagController {
 
 
     @GetMapping("/getAll")
-    public ResponseEntity<ApiResponseDto<TagEntity>> getTags(@AuthenticationPrincipal UserEntity currentUser ){
-        ApiResponseDto<TagEntity> response =  tagService.getAll(currentUser);
+    public ResponseEntity<ApiResponseDto<TagDto>> getTags(@AuthenticationPrincipal UserEntity currentUser ){
+        ApiResponseDto<TagDto> response =  tagService.getAll(currentUser);
 
         return ResponseEntity.status(HttpStatusCode.valueOf(response.getCode()))
                 .body(response);
