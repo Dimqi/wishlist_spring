@@ -2,6 +2,10 @@ package com.example.demo_pet_spring.entities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -28,6 +32,12 @@ public class WishEntity {
     @ManyToOne
     @JoinColumn(name = "tag_id", nullable = true)
     private TagEntity tag;
+
+    @ManyToMany
+    @JoinTable(name="wish_reservation",
+            joinColumns = @JoinColumn(name = "wish_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<UserEntity> reservedBy = new HashSet<>();
 
     public String getLink() {
         return link;
@@ -75,5 +85,13 @@ public class WishEntity {
 
     public void setTag(TagEntity tag) {
         this.tag = tag;
+    }
+
+    public Set<UserEntity> getReservedBy() {
+        return reservedBy;
+    }
+
+    public void setReservedBy(Set<UserEntity> reservedBy) {
+        this.reservedBy = reservedBy;
     }
 }

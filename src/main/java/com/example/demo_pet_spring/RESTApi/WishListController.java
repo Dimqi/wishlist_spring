@@ -36,7 +36,7 @@ public class WishListController {
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponseDto<WishDto>>  getAllWishes(@AuthenticationPrincipal UserEntity currentUser){
-        ApiResponseDto<WishDto> response = wishListService.getAllWishes(currentUser);
+        ApiResponseDto<WishDto> response = wishListService.getAllWishes(currentUser, true);
 
         return ResponseEntity.status(HttpStatusCode.valueOf(response.getCode()))
                 .body(response);
@@ -78,5 +78,21 @@ public class WishListController {
         return ResponseEntity.status(HttpStatusCode.valueOf(response.getCode()))
                 .body(response);
 
+    }
+
+    @PatchMapping("/reserveWish")
+    public ResponseEntity<ApiResponseDto<WishDto>> reserveWish(@RequestParam String token, @RequestParam(name="wish_id") Long wishId,  @AuthenticationPrincipal UserEntity currentUser){
+        ApiResponseDto<WishDto> response = wishListService.reserveWish(wishId, currentUser, token);
+
+        return ResponseEntity.status(HttpStatusCode.valueOf(response.getCode()))
+                .body(response);
+    }
+
+    @PatchMapping("/unReserveWish")
+    public ResponseEntity<ApiResponseDto<WishDto>> unReserveWish(@RequestParam(name="wish_id") Long wishId,  @AuthenticationPrincipal UserEntity currentUser){
+        ApiResponseDto<WishDto> response = wishListService.unReserveWish(wishId, currentUser);
+
+        return ResponseEntity.status(HttpStatusCode.valueOf(response.getCode()))
+                .body(response);
     }
 }

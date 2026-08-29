@@ -4,16 +4,13 @@ import com.example.demo_pet_spring.dataTransferObjects.ApiResponseDto;
 import com.example.demo_pet_spring.dataTransferObjects.WishDto;
 import com.example.demo_pet_spring.entities.ShareToken;
 import com.example.demo_pet_spring.entities.UserEntity;
-import com.example.demo_pet_spring.entities.WishEntity;
+import com.example.demo_pet_spring.repository.ShareRepository;
 import com.example.demo_pet_spring.repository.UserRepository;
 import com.example.demo_pet_spring.repository.WishListRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -22,16 +19,18 @@ public class ShareService {
     private final ShareTokenGeneratorService tokenGenerator;
     private final UserRepository userRepository;
     private final WishListService wishListService;
+    private final ShareRepository shareRepository;
 
     @Value("${app.base-url:http://localhost:8080}")
     private String baseUrl;
 
     public ShareService(ShareTokenGeneratorService tokenGenerator,
                         UserRepository userRepository,
-                        WishListRepository wishListRepository, WishListService wishListService) {
+                        WishListRepository wishListRepository, WishListService wishListService, ShareRepository shareRepository) {
         this.tokenGenerator = tokenGenerator;
         this.userRepository = userRepository;
         this.wishListService = wishListService;
+        this.shareRepository = shareRepository;
     }
 
 
@@ -54,12 +53,13 @@ public class ShareService {
         return responseDto;
     }
 
+
     @Transactional(readOnly = true)
     public ApiResponseDto<WishDto> getWishesByToken(String token) {
         UserEntity user = userRepository.findByToken(token)
                 .orElseThrow(() -> new RuntimeException("Invalid token"));
 
-        return wishListService.getAllWishes(user);
+        return wishListService.getAllWishes(user, false);
     }
 
 

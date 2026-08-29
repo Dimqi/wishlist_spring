@@ -19,7 +19,7 @@ public class TagService {
     public TagService(TagRepository tagRepository) {
         this.tagRepository = tagRepository;
     }
-    //пофиксить lazy загрузку
+
 
     public TagEntity addNewTag(String name, UserEntity user){
         TagEntity tag = new TagEntity();
@@ -58,13 +58,11 @@ public class TagService {
 
         return createResponse(true, 200, "tags successfully found!", null, tagsDto);
 
-
     }
 
 
 
     public ApiResponseDto<TagDto> createResponse(boolean success, int code, String message, TagDto data, List<TagDto> listData ){
-
         ApiResponseDto<TagDto> responseDTO = new ApiResponseDto<>();
         responseDTO.setSuccess(success);
         responseDTO.setCode(code);

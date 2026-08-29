@@ -5,9 +5,7 @@ import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -34,6 +32,12 @@ public class UserEntity implements UserDetails {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "share_token_id")
     private ShareToken shareToken;
+
+    @ManyToMany(mappedBy = "reservedBy")
+    private Set<WishEntity> reservedWishes = new HashSet<>();
+
+    @OneToMany(mappedBy = "createdBy")
+    private List<WishEntity> wishes = new ArrayList<>();
 
     public String getPassword() {
         return password;
@@ -84,4 +88,20 @@ public class UserEntity implements UserDetails {
     public void setShareToken(ShareToken shareToken) {
         this.shareToken = shareToken;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (!(o instanceof UserEntity)) return false;
+
+        UserEntity that = (UserEntity) o;
+        return Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return username != null ? username.hashCode() : 0;
+    }
+
 }

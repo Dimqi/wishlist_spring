@@ -1,7 +1,12 @@
 package com.example.demo_pet_spring.dataTransferObjects;
 
+import com.example.demo_pet_spring.entities.UserEntity;
 import com.example.demo_pet_spring.entities.WishEntity;
 import com.example.demo_pet_spring.entities.WishPriority;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class WishDto {
     private Long id;
@@ -14,7 +19,9 @@ public class WishDto {
 
     private String tagName;
 
-    public WishDto(WishEntity wishEntity){
+    private List<String> reservedByUsernames = new ArrayList<>();
+
+    public WishDto(WishEntity wishEntity, boolean isOwner){
         setId(wishEntity.getId());
         setName(wishEntity.getName());
         setLink(wishEntity.getLink());
@@ -22,6 +29,14 @@ public class WishDto {
 
         if(wishEntity.getTag() != null){
             setTagName(wishEntity.getTag().getName());
+        }
+
+        if (!isOwner && !wishEntity.getReservedBy().isEmpty()) {
+            this.reservedByUsernames = wishEntity.getReservedBy().stream()
+                    .map(UserEntity::getUsername)
+                    .collect(Collectors.toList());
+
+
         }
     }
 
@@ -64,5 +79,14 @@ public class WishDto {
 
     public void setTagName(String tagName) {
         this.tagName = tagName;
+    }
+
+
+    public List<String> getReservedByUsernames() {
+        return reservedByUsernames;
+    }
+
+    public void setReservedByUsernames(List<String> reservedByUsernames) {
+        this.reservedByUsernames = reservedByUsernames;
     }
 }

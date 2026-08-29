@@ -33,4 +33,7 @@ public interface WishListRepository extends JpaRepository<WishEntity, Long> {
                   @Param("tagId") Long tagId,
                   @Param("userId") Long userId);
 
+    @Query("SELECT w FROM WishEntity w LEFT JOIN FETCH w.reservedBy WHERE w.id = :id")
+    Optional<WishEntity> findByIdWithReservedUsers(@Param("id") Long id);
+
 }
