@@ -101,7 +101,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public int hashCode() {
-        return username != null ? username.hashCode() : 0;
+        return getId() != null ? getId().hashCode() : 0;
     }
 
 }

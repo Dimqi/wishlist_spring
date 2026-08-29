@@ -53,7 +53,6 @@ public class ShareToken {
     public UserEntity getUser() { return user; }
     public void setUser(UserEntity user) { this.user = user; }
 
-    // Вспомогательные методы
     public boolean isValid() {
         return isActive && (expiresAt == null || expiresAt.isAfter(LocalDateTime.now()));
     }
