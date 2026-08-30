@@ -9,17 +9,14 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Проверяем наличие токена при загрузке приложения
         const savedToken = localStorage.getItem('token');
         if (savedToken) {
-            // В идеале здесь нужно сделать запрос /me для проверки валидности токена
             setUser({ token: savedToken });
         }
         setLoading(false);
     }, []);
 
     const login = (userData) => {
-        // Сохраняем токен, полученный из response.data.token
         const token = userData.token;
         localStorage.setItem('token', token);
         setUser(userData);

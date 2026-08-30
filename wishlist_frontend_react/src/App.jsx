@@ -19,11 +19,13 @@ function App() {
         <BrowserRouter>
             <AuthProvider>
                 <Routes>
-                    {/* Публичные роуты */}
+                    {/* 1. Публичная страница логина */}
                     <Route path="/login" element={<LoginPage />} />
+
+                    {/* 2. Публичная страница просмотра вишлиста (БЕЗ PrivateRoute) */}
                     <Route path="/shared/:token" element={<SharedWishlist />} />
 
-                    {/* Защищенные роуты */}
+                    {/* 3. Защищенный роут для владельца */}
                     <Route
                         path="/dashboard"
                         element={
@@ -33,8 +35,8 @@ function App() {
                         }
                     />
 
-                    {/* Редирект по умолчанию */}
-                    <Route path="*" element={<Navigate to="/login" />} />
+                    {/* 4. Если адрес не совпал ни с чем выше - на логин */}
+                    <Route path="*" element={<Navigate to="/login" replace />} />
                 </Routes>
             </AuthProvider>
         </BrowserRouter>

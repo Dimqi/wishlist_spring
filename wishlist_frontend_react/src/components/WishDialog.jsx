@@ -12,7 +12,6 @@ const WishDialog = ({ visible, onHide, onSave, wish }) => {
         tagName: ''
     });
 
-    // Значения соответствуют вашему Java Enum: MustHave, ShouldHave, CouldHave, WontHave
     const priorities = [
         { label: 'Обязательно (Must Have)', value: 'MustHave' },
         { label: 'Желательно (Should Have)', value: 'ShouldHave' },

@@ -24,8 +24,6 @@ const LoginPage = () => {
 
         try {
             const response = await api.post(endpoint, formData);
-            // Согласно вашему DTO: response.data — это ApiResponseDto,
-            // response.data.data — это UserDto, в котором лежит token
             if (response.data && response.data.data) {
                 login(response.data.data);
             }
@@ -57,7 +55,7 @@ const LoginPage = () => {
                             value={formData.password}
                             onChange={(e) => setFormData({...formData, password: e.target.value})}
                             toggleMask
-                            feedback={!isLogin} // Показывать индикатор сложности только при регистрации
+                            feedback={!isLogin}
                             className="w-full"
                             inputClassName="w-full"
                             required
