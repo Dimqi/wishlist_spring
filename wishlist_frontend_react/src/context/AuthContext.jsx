@@ -10,8 +10,13 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const savedToken = localStorage.getItem('token');
-        if (savedToken) {
-            setUser({ token: savedToken });
+        const savedUsername = localStorage.getItem('username');
+
+        if (savedToken && savedUsername) {
+            setUser({
+                token: savedToken,
+                username: savedUsername
+            });
         }
         setLoading(false);
     }, []);
@@ -19,6 +24,7 @@ export const AuthProvider = ({ children }) => {
     const login = (userData) => {
         const token = userData.token;
         localStorage.setItem('token', token);
+        localStorage.setItem('username', userData.username);
         setUser(userData);
         navigate('/dashboard');
     };

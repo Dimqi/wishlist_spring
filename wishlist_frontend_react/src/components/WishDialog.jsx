@@ -8,7 +8,7 @@ const WishDialog = ({ visible, onHide, onSave, wish }) => {
     const [formData, setFormData] = useState({
         name: '',
         link: '',
-        wishPriority: 'ShouldHave', // Значение по умолчанию из вашего Enum
+        wishPriority: 'ShouldHave',
         tagName: ''
     });
 

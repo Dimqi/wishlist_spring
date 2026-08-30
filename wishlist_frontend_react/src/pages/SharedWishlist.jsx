@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { shareService } from '../api/shareService';
 import { wishService } from '../api/wishService';
 import { useAuth } from '../context/AuthContext';
 import WishCard from '../components/WishCard';
 import { Toast } from 'primereact/toast';
-import { Button } from 'primereact/button';
 import { ProgressSpinner } from 'primereact/progressspinner';
 
 const SharedWishlist = () => {
     const { token } = useParams();
     const { user } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const [wishes, setWishes] = useState([]);
     const [loading, setLoading] = useState(true);
     const toast = useRef(null);
@@ -19,66 +19,49 @@ const SharedWishlist = () => {
     const loadWishes = async () => {
         setLoading(true);
         try {
-            const response = await shareService.getWishesByToken(token);
-
-            const result = response.data.listData || response.data.data;
-
-            if (result) {
-                setWishes(Array.isArray(result) ? result : [result]);
-            } else {
-                setWishes([]);
-            }
-        } catch (error) {
-            console.error("Ошибка загрузки публичного списка:", error);
-            toast.current.show({ severity: 'error', summary: 'Ошибка', detail: 'Список не найден или токен невалиден' });
-        } finally {
-            setLoading(false);
-        }
+            const res = await shareService.getWishesByToken(token);
+            const data = res.data.listData;
+            setWishes(Array.isArray(data) ? data : (data ? [data] : []));
+        } finally { setLoading(false); }
     };
 
     useEffect(() => { loadWishes(); }, [token]);
 
-    const handleReserve = async (wishId) => {
+    const handleReserve = async (id) => {
         if (!user) {
-            toast.current.show({
-                severity: 'info',
-                summary: 'Нужна авторизация',
-                detail: 'Войдите, чтобы забронировать подарок'
-            });
+            toast.current.show({ severity: 'info', summary: 'Вход', detail: 'Нужна авторизация' });
+            setTimeout(() => navigate('/login', { state: { from: location.pathname } }), 1000);
             return;
         }
-
         try {
-            await wishService.reserve(wishId, token);
-            toast.current.show({ severity: 'success', summary: 'Успех', detail: 'Вы забронировали этот подарок!' });
-            loadWishes(); // Перегружаем список, чтобы увидеть изменения
-        } catch (error) {
-            toast.current.show({ severity: 'error', summary: 'Ошибка', detail: 'Не удалось забронировать' });
-        }
+            await wishService.reserve(id, token);
+            toast.current.show({ severity: 'success', summary: 'Успешно' });
+            loadWishes();
+        } catch (e) { toast.current.show({ severity: 'error', summary: 'Ошибка' }); }
+    };
+
+    const handleUnreserve = async (id) => {
+        try {
+            await wishService.unreserve(id);
+            toast.current.show({ severity: 'info', summary: 'Бронь отменена' });
+            loadWishes();
+        } catch (e) { toast.current.show({ severity: 'error', summary: 'Не удалось отменить' }); }
     };
 
     return (
-        <div className="p-4" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="p-4 mx-auto" style={{maxWidth: '1200px'}}>
             <Toast ref={toast} />
-
-            <div className="flex justify-content-between align-items-center mb-5">
-                <h1>Список желаний друга</h1>
-                {!user && (
-                    <Button label="Войти" icon="pi pi-sign-in" onClick={() => navigate('/login')} className="p-button-text" />
-                )}
-            </div>
-
-            {loading ? (
-                <div className="flex justify-content-center mt-8"><ProgressSpinner /></div>
-            ) : (
+            <h1 className="text-center mb-5 font-bold">Вишлист друга</h1>
+            {loading ? <div className="flex justify-content-center mt-8"><ProgressSpinner /></div> : (
                 <div className="grid">
-                    {wishes.map(wish => (
-                        <div key={wish.id} className="col-12 md:col-6 lg:col-3 p-2">
+                    {wishes.map(w => (
+                        <div key={w.id} className="col-12 md:col-6 lg:col-3 p-2 flex">
                             <WishCard
-                                wish={wish}
+                                wish={w}
                                 isOwner={false}
-                                canReserve={true}
+                                user={user}
                                 onReserve={handleReserve}
+                                onUnreserve={handleUnreserve}
                             />
                         </div>
                     ))}

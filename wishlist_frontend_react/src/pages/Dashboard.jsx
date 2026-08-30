@@ -13,7 +13,6 @@ const Dashboard = () => {
     const [showDialog, setShowDialog] = useState(false);
     const toast = useRef(null);
 
-    // 1. Функция запроса всех желаний текущего пользователя
     const fetchWishes = async () => {
         setLoading(true);
         try {
@@ -44,7 +43,7 @@ const Dashboard = () => {
         try {
             await wishService.create(formData);
             setShowDialog(false);
-            fetchWishes(); // Обновляем список
+            fetchWishes();
             toast.current.show({ severity: 'success', summary: 'Успех', detail: 'Желание добавлено' });
         } catch (error) {
             toast.current.show({ severity: 'error', summary: 'Ошибка', detail: 'Не удалось сохранить' });
@@ -54,35 +53,31 @@ const Dashboard = () => {
     const copyShareLink = async () => {
         try {
             const response = await shareService.getLink();
-            const fullBackendUrl = response.data.data; // Это вся строка с бэка
+            const data = response.data.data;
 
-            const token = fullBackendUrl.includes('token=')
-                ? fullBackendUrl.split('token=')[1]
-                : fullBackendUrl;
+            const token = data.includes('token=') ? data.split('token=')[1] : data;
 
             const url = `${window.location.origin}/shared/${token}`;
-
             await navigator.clipboard.writeText(url);
+
             toast.current.show({
                 severity: 'success',
-                summary: 'Ссылка скопирована',
-                detail: 'Теперь друзья могут забронировать подарки!'
+                summary: 'Готово',
+                detail: 'Ссылка на ваш вишлист скопирована!'
             });
         } catch (error) {
-            console.error("Ошибка шаринга:", error);
             toast.current.show({ severity: 'error', summary: 'Ошибка', detail: 'Не удалось создать ссылку' });
         }
     };
+
 
     return (
         <div className="p-4" style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <Toast ref={toast} />
 
-            {/* Заголовок с кнопками */}
             <div className="flex justify-content-between align-items-center mb-5">
                 <h1 className="m-0">Мои желания</h1>
                 <div className="flex gap-2">
-                    {/* Кнопка "Поделиться" */}
                     <Button
                         label="Поделиться"
                         icon="pi pi-share-alt"
@@ -99,7 +94,6 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* Спиннер загрузки */}
             {loading ? (
                 <div className="flex justify-content-center mt-8">
                     <ProgressSpinner />
@@ -125,7 +119,6 @@ const Dashboard = () => {
                 </div>
             )}
 
-            {/* Диалоговое окно (модалка) */}
             <WishDialog
                 visible={showDialog}
                 onHide={() => setShowDialog(false)}
