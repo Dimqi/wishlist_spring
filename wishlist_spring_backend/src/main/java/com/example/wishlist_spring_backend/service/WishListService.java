@@ -11,6 +11,9 @@ import com.example.wishlist_spring_backend.exception.WishDoesNotExistException;
 import com.example.wishlist_spring_backend.repository.UserRepository;
 import com.example.wishlist_spring_backend.repository.WishListRepository;
 import org.hibernate.Hibernate;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +37,7 @@ public class WishListService {
     }
 
 
-
+    @CacheEvict(value = "wishes", key = "#currentUser.id")
     public ApiResponseDto<WishDto> addWish(WishRequestDTO wishDto, UserEntity currentUser){
         
         WishEntity wish = new WishEntity();
@@ -68,6 +71,7 @@ public class WishListService {
         }
     }
 
+    @CacheEvict(value = "wishes", key = "#currentUser.id")
     public ApiResponseDto<WishDto> deleteWish(Long id, UserEntity currentUser){
         Long userId = currentUser.getId();
 
@@ -76,6 +80,7 @@ public class WishListService {
 
     }
 
+    @Cacheable(value = "wishes", key = "#currentUser.id")
     public ApiResponseDto<WishDto>  getAllWishes(UserEntity currentUser, boolean isOwner){
         Long userId = currentUser.getId();
         List<WishEntity> wishes = wishListRepository.findAll(userId);
@@ -88,6 +93,7 @@ public class WishListService {
 
     }
 
+    @Cacheable(value = "wishes_by_tag", key = "#currentUser.id + '_' + #tagName")
     public ApiResponseDto<WishDto> getAllWishesByTag(UserEntity currentUser, String tagName){
         Long userId = currentUser.getId();
         TagEntity tag = tagService.getTagByName(tagName, currentUser)
@@ -106,6 +112,11 @@ public class WishListService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "wishes", key = "#currentUser.id"),
+            @CacheEvict(value = "wishes_by_tag", allEntries = true),
+            @CacheEvict(value = "shared_wishlist", allEntries = true)
+    })
     public ApiResponseDto<WishDto> updateTagOnWish(Long wishId, UserEntity currentUser, String tagName){
         TagEntity tag = tagService.getTagByName(tagName, currentUser)
                 .orElseGet(() -> tagService.addNewTag(tagName, currentUser));
@@ -124,6 +135,10 @@ public class WishListService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "wishes", key = "#currentUser.id"),
+            @CacheEvict(value = "shared_wishlist", allEntries = true)
+    })
     public ApiResponseDto<WishDto> reserveWish(Long wishId, UserEntity currentUser, String shareToken){
         WishEntity wish = wishListRepository.findByIdWithReservedUsers(wishId)
                 .orElseThrow(()->WishDoesNotExistException.createWishDoesNotExistException("wish does not exist"));
@@ -158,6 +173,10 @@ public class WishListService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "wishes", key = "#currentUser.id"),
+            @CacheEvict(value = "shared_wishlist", allEntries = true)
+    })
     public ApiResponseDto<WishDto> unReserveWish(Long wishId, UserEntity currentUser){
         WishEntity wish = wishListRepository.findByIdWithReservedUsers(wishId)
                 .orElseThrow(()->WishDoesNotExistException.createWishDoesNotExistException("wish does not exist"));

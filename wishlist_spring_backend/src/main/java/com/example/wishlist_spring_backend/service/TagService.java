@@ -5,6 +5,8 @@ import com.example.wishlist_spring_backend.dataTransferObjects.TagDto;
 import com.example.wishlist_spring_backend.entities.TagEntity;
 import com.example.wishlist_spring_backend.entities.UserEntity;
 import com.example.wishlist_spring_backend.repository.TagRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,7 @@ public class TagService {
     }
 
     @Transactional
+    @CacheEvict(value = "tags", key = "#user.id")
     public ApiResponseDto<TagDto> createNewTag(String name, UserEntity user){
         if(tagRepository.findTagEntitiesByName(name, user.getId()).isPresent()){
             return  createResponse(false, 400, "Tag with this name already exists", null, null);
@@ -43,11 +46,12 @@ public class TagService {
 
     }
 
-
+    @Cacheable(value = "tags", key = "#user.id + '_' + #name")
     public Optional<TagEntity> getTagByName(String name, UserEntity user){
         return tagRepository.findTagEntitiesByName(name, user.getId());
     }
 
+    @Cacheable(value = "tags", key = "#user.id")
     public ApiResponseDto<TagDto> getAll(UserEntity user){
         List<TagEntity> tags = tagRepository.findAll(user.getId());
 

@@ -8,6 +8,8 @@ import com.example.wishlist_spring_backend.repository.ShareRepository;
 import com.example.wishlist_spring_backend.repository.UserRepository;
 import com.example.wishlist_spring_backend.repository.WishListRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +35,7 @@ public class ShareService {
         this.shareRepository = shareRepository;
     }
 
-
+    @CacheEvict(value = "shared_wishlist", allEntries = true)
     public ApiResponseDto<String> createLink(UserEntity currentUser) {
         ShareToken shareToken = tokenGenerator.generateShareToken();
 
@@ -53,7 +55,7 @@ public class ShareService {
         return responseDto;
     }
 
-
+    @Cacheable(value = "shared_wishlist", key = "#token")
     @Transactional(readOnly = true)
     public ApiResponseDto<WishDto> getWishesByToken(String token) {
         UserEntity user = userRepository.findByToken(token)
