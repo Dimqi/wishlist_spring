@@ -32,8 +32,6 @@ public class RedisConfig {
 
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory connectionFactory, ObjectMapper objectMapper) {
-        // ✅ В этой версии RedisSerializer.json() не принимает аргументов,
-        // а использует ObjectMapper из контекста
         RedisSerializer<Object> serializer = RedisSerializer.json();
 
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()

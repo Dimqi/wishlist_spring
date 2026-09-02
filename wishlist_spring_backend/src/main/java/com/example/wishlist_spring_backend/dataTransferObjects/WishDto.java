@@ -3,6 +3,8 @@ package com.example.wishlist_spring_backend.dataTransferObjects;
 import com.example.wishlist_spring_backend.entities.UserEntity;
 import com.example.wishlist_spring_backend.entities.WishEntity;
 import com.example.wishlist_spring_backend.entities.WishPriority;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,10 @@ public class WishDto {
 
     private List<String> reservedByUsernames = new ArrayList<>();
 
+    @JsonCreator
+    public WishDto(){}
+
+    @JsonIgnore
     public WishDto(WishEntity wishEntity, boolean isOwner){
         setId(wishEntity.getId());
         setName(wishEntity.getName());
